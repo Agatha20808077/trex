@@ -2,13 +2,15 @@
 var trex, trex_correndo;
 var edges;
 var solo, soloImg, soloinvisivel;
+var nuvem, nuvemimg;
+
 
 //função de pré-carregamento
 function preload()
 {
   trex_correndo = loadAnimation("trex1.png","trex2.png","trex3.png");
   soloImg = loadImage("ground2.png");
-  
+  nuvemimg = loadImage("cloud.png");
 }
 
 //função de configuração
@@ -37,7 +39,7 @@ function draw()
 {
   background("lightgray");
   solo.velocityX = -2;
-  console.log(solo.x);
+ // console.log(solo.x);
 
   //solo infinito
   if(solo.x<0){
@@ -45,7 +47,7 @@ function draw()
   }
 
   //fazer o trex pular
-  if(keyDown("space")){
+  if(keyDown("space") && trex.y>=161.5){
     trex.velocityY = -10;
   }
  
@@ -57,10 +59,24 @@ function draw()
   trex.collide(soloinvisivel);
  
   //posição do trex no eixo y
-  //console.log(trex.y);
+  console.log(trex.y);
  
+  //chamada da função gerar nuvens
+  gerarNuvens();
+
   //desenha o sprite do Trex
   drawSprites();
 
 }
+ function gerarNuvens(){
+   if(frameCount%60===0){
+  nuvem=createSprite(600, 90, 20, 30);
+   nuvem.addImage(nuvemimg);
+   nuvem.velocityX = - 3;
+  nuvem.y=Math.round(random(70, 110));
+  console.log(trex.depth);
+  console.log(nuvem.depth);
+  trex.depth=nuvem.depth +1;
+   }
+ }
 
