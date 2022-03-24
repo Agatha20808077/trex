@@ -3,6 +3,7 @@ var trex, trex_correndo;
 var edges;
 var solo, soloImg, soloinvisivel;
 var nuvem, nuvemimg;
+var cacto, cactoimg1, cactoimg2, cactoimg3, cactoimg4, cactoimg5, cactoimg6;
 
 
 //função de pré-carregamento
@@ -11,6 +12,14 @@ function preload()
   trex_correndo = loadAnimation("trex1.png","trex2.png","trex3.png");
   soloImg = loadImage("ground2.png");
   nuvemimg = loadImage("cloud.png");
+  cactoimg1 = loadImage("obstacle1.png");
+  cactoimg2 = loadImage("obstacle2.png");
+  cactoimg3 = loadImage("obstacle3.png");
+  cactoimg4 = loadImage("obstacle4.png");
+  cactoimg5 = loadImage("obstacle5.png");
+  cactoimg6 = loadImage("obstacle6.png");
+
+
 }
 
 //função de configuração
@@ -52,7 +61,7 @@ function draw()
   }
  
   //dar gravidade para o trex
-  trex.velocityY = trex.velocityY + 0.5;
+  trex.velocityY = trex.velocityY + 0.4;
   
 
   //colidir com o solo
@@ -64,19 +73,55 @@ function draw()
   //chamada da função gerar nuvens
   gerarNuvens();
 
+  //chamada da função gerar cactos
+  gerarCactos();
+
   //desenha o sprite do Trex
   drawSprites();
 
 }
- function gerarNuvens(){
+//função para gerar as nuvens
+ function gerarNuvens()
+ {
+   //para gerar a nuvem a cada 60 quadros(frameCount)
    if(frameCount%60===0){
-  nuvem=createSprite(600, 90, 20, 30);
-   nuvem.addImage(nuvemimg);
-   nuvem.velocityX = - 3;
-  nuvem.y=Math.round(random(70, 110));
-  console.log(trex.depth);
-  console.log(nuvem.depth);
-  trex.depth=nuvem.depth +1;
+    nuvem=createSprite(600, 90, 20, 30);
+    nuvem.addImage(nuvemimg);
+    nuvem.velocityX = - 3;
+    //gerar nuvens em posições aleatórias no eixo y
+    nuvem.y=Math.round(random(70, 110));
+    //console.log(trex.depth);
+    //console.log(nuvem.depth);
+    //altera a profundidade do trex (pro trex ficar na frente da nuvem);
+    trex.depth=nuvem.depth +1;
    }
+ }
+
+ //função para gerar os cactos
+  function gerarCactos()
+  {
+    if(frameCount % 100 === 0)
+    {
+     cacto = createSprite(600, 170, 20, 40);
+     cacto.velocityX = -2;
+     cacto.scale = 0.5;
+     var aleatorio = Math.round(random(1,6));
+     switch(aleatorio){
+       case 1: cacto.addImage(cactoimg1);
+       break;
+       case 2: cacto.addImage(cactoimg2);
+       break;
+       case 3: cacto.addImage(cactoimg3);
+       break;
+       case 4: cacto.addImage(cactoimg4);
+       break;
+       case 5: cacto.addImage(cactoimg5);
+       break;
+       case 6: cacto.addImage(cactoimg6);
+       break;
+       default: break;
+     }
+     //break traz para cá
+    }
  }
 
