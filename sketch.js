@@ -1,10 +1,26 @@
 //declaração das variáveis
 var trex, trex_correndo;
-var edges;
+var edges, pontos=0;
 var solo, soloImg, soloinvisivel;
 var nuvem, nuvemimg;
 var cacto, cactoimg1, cactoimg2, cactoimg3, cactoimg4, cactoimg5, cactoimg6;
+var gCacto, gNuvem; 
+var PLAY = 1;
+var END = 0;
+var gameState = PLAY; //gameState = 1
 
+//Objeto JavaScript e JSON(JavaScript Object Notation)
+/*
+var Estudante = {
+  nome: "Ágatha",
+  idade: 14, //número
+  curso: "Programação", //texto
+  notas: [5,5,5,4] //matriz
+  //i     0 1 2 3
+};
+
+console.log(Estudante.notas[3]);
+*/
 
 //função de pré-carregamento
 function preload()
@@ -41,14 +57,38 @@ function setup()
 
   soloinvisivel = createSprite(50,190,100,10);
   soloinvisivel.visible = false;
+
+  //criar os grupos de cactos e nuvens
+  gNuvem = new Group();
+  gCacto = new Group();
 }
 
 //desenho e animação
 function draw()
 {
   background("lightgray");
-  solo.velocityX = -2;
- // console.log(solo.x);
+  //exibir pontuação
+  //console.log(frameCount);
+  text("Score: " + pontos, 500,50);
+  
+
+  if(gameState === PLAY){
+    //contar pontuação
+    pontos = pontos + Math.round(frameCount/60);
+
+    //movimento do solo
+    solo.velocityX = -2;
+    //console.log(solo.x);
+
+  }
+  else if(gameState === END){
+    //solo parado
+    solo.velocityX = 0;
+
+
+  }
+
+  
 
   //solo infinito
   if(solo.x<0){
@@ -61,14 +101,14 @@ function draw()
   }
  
   //dar gravidade para o trex
-  trex.velocityY = trex.velocityY + 0.4;
+  trex.velocityY = trex.velocityY + 0.3;
   
 
   //colidir com o solo
   trex.collide(soloinvisivel);
  
   //posição do trex no eixo y
-  console.log(trex.y);
+  //console.log(trex.y);
  
   //chamada da função gerar nuvens
   gerarNuvens();
@@ -94,6 +134,12 @@ function draw()
     //console.log(nuvem.depth);
     //altera a profundidade do trex (pro trex ficar na frente da nuvem);
     trex.depth=nuvem.depth +1;
+
+    // atribuir tempo de vida para o sprite
+    nuvem.lifetime = 250;
+
+    //adicionar os sprites de nuvem no grupo
+    gNuvem.add(nuvem);
    }
  }
 
@@ -122,6 +168,12 @@ function draw()
        default: break;
      }
      //break traz para cá
+
+     // atribuir tempo de vida para o sprite
+      cacto.lifetime = 330;
+
+     //adicionar os cacto de nuvem no grupo
+     gCacto.add(cacto);
     }
  }
 
