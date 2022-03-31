@@ -80,34 +80,18 @@ function draw()
     solo.velocityX = -2;
     //console.log(solo.x);
 
-  }
-  else if(gameState === END){
-    //solo parado
-    solo.velocityX = 0;
-
-
-  }
-
-  
-
-  //solo infinito
+    //solo infinito
   if(solo.x<0){
     solo.x = solo.width/2;
   }
+//fazer o trex pular
+if(keyDown("space") && trex.y>=161.5){
+  trex.velocityY = -10;
+}
 
-  //fazer o trex pular
-  if(keyDown("space") && trex.y>=161.5){
-    trex.velocityY = -10;
-  }
- 
-  //dar gravidade para o trex
-  trex.velocityY = trex.velocityY + 0.3;
-  
-
-  //colidir com o solo
-  trex.collide(soloinvisivel);
- 
-  //posição do trex no eixo y
+//dar gravidade para o trex
+trex.velocityY = trex.velocityY + 0.3;
+//posição do trex no eixo y
   //console.log(trex.y);
  
   //chamada da função gerar nuvens
@@ -116,8 +100,29 @@ function draw()
   //chamada da função gerar cactos
   gerarCactos();
 
+  //mudança do estado do jogo play para end
+if(gCacto.isTouching(trex)){
+  gameState = END;
+}
+
+  }
+  else if(gameState === END){
+    //solo parado
+    solo.velocityX = 0;
+
+    //nuvem parada
+    gNuvem.setVelocityXEach(0);
+
+    //cacto parado
+    gCacto.setVelocityXEach(0);
+
+  }
+  //colidir com o solo
+  trex.collide(soloinvisivel);
+  
   //desenha o sprite do Trex
   drawSprites();
+  
 
 }
 //função para gerar as nuvens
