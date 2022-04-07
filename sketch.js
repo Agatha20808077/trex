@@ -1,5 +1,5 @@
 //declaração das variáveis
-var trex, trex_correndo;
+var trex, trex_correndo, trexBateu;
 var edges, pontos=0;
 var solo, soloImg, soloinvisivel;
 var nuvem, nuvemimg;
@@ -8,6 +8,8 @@ var gCacto, gNuvem;
 var PLAY = 1;
 var END = 0;
 var gameState = PLAY; //gameState = 1
+var recomeçar, recomeçarimg, gameover, gameoverimg;
+
 
 //Objeto JavaScript e JSON(JavaScript Object Notation)
 /*
@@ -34,8 +36,9 @@ function preload()
   cactoimg4 = loadImage("obstacle4.png");
   cactoimg5 = loadImage("obstacle5.png");
   cactoimg6 = loadImage("obstacle6.png");
-
-
+  trexBateu = loadAnimation("trex_collided.png");
+  recomeçarimg = loadImage("restart.png");
+  gameoverimg = loadImage("gameOver.png");
 }
 
 //função de configuração
@@ -46,7 +49,19 @@ function setup()
   //criar o sprite do trex
   trex = createSprite(50,160,20,50);
   trex.addAnimation("Correndo",trex_correndo);
+  trex.addAnimation("bateu",trexBateu);
   trex.scale = 0.5;
+  trex.setCollider("rectangle",0,0,60,80);
+  trex.debug=false;
+
+  // criar os sprites de recomeçar e fim de jogo
+  recomeçar = createSprite(300, 100);
+  recomeçar.addImage(recomeçarimg);
+  recomeçar.scale = 0.5;
+
+  gameover = createSprite(300, 70);
+  gameover.addImage(gameoverimg);
+  gameover.scale = 0.7;
 
   //criar a borda
   edges = createEdgeSprites();
@@ -116,7 +131,19 @@ if(gCacto.isTouching(trex)){
     //cacto parado
     gCacto.setVelocityXEach(0);
 
+    //trex parado
+  trex.velocityY = 0;
+
+    //tempo de vida para que os sprites nunca sejam destruidos
+    gCacto.setLifetimeEach(-1);
+
+   gNuvem.setLifetimeEach(-1);
+
+   //mudando a animação do trex
+   trex.changeAnimation("bateu",trexBateu);
+
   }
+
   //colidir com o solo
   trex.collide(soloinvisivel);
   
