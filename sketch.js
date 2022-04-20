@@ -9,6 +9,7 @@ var PLAY = 1;
 var END = 0;
 var gameState = PLAY; //gameState = 1
 var recomeçar, recomeçarimg, gameover, gameoverimg;
+var puloSom, morteSom, pontoSom;
 
 
 //Objeto JavaScript e JSON(JavaScript Object Notation)
@@ -39,6 +40,9 @@ function preload()
   trexBateu = loadAnimation("trex_collided.png");
   recomeçarimg = loadImage("restart.png");
   gameoverimg = loadImage("gameOver.png");
+  puloSom = loadSound("jump.mp3");
+  morteSom = loadSound("die.mp3");
+  pontoSom = loadSound("checkPoint.mp3");
 }
 
 //função de configuração
@@ -91,6 +95,11 @@ function draw()
     //contar pontuação
     pontos = pontos + Math.round(frameCount/60);
 
+    //tocar musica a cada 100 pontos
+    if(pontos>0 && pontos % 1000 === 0){
+      pontoSom.play();
+    }
+
     //movimento do solo
     solo.velocityX = -2;
     //console.log(solo.x);
@@ -102,6 +111,7 @@ function draw()
 //fazer o trex pular
 if(keyDown("space") && trex.y>=161.5){
   trex.velocityY = -10;
+  puloSom.play();
 }
 
 //dar gravidade para o trex
@@ -118,6 +128,7 @@ trex.velocityY = trex.velocityY + 0.3;
   //mudança do estado do jogo play para end
 if(gCacto.isTouching(trex)){
   gameState = END;
+  morteSom.play();
 }
 
   }
