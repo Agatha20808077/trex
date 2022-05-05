@@ -49,9 +49,10 @@ function preload()
 function setup()
 {
   //criar tela
-  createCanvas(600,200);
+  //createCanvas(600,200);
+  createCanvas(windowWidth,windowHeight);
   //criar o sprite do trex
-  trex = createSprite(50,160,20,50);
+  trex = createSprite(50,height/2,20,50);
   trex.addAnimation("Correndo",trex_correndo);
   trex.addAnimation("bateu",trexBateu);
   trex.scale = 0.5;
@@ -59,11 +60,11 @@ function setup()
   trex.debug=false;
 
   // criar os sprites de recomeçar e fim de jogo
-  recomeçar = createSprite(300, 100);
+  recomeçar = createSprite(width/2, height/2-100);
   recomeçar.addImage(recomeçarimg);
   recomeçar.scale = 0.5;
 
-  gameover = createSprite(300, 70);
+  gameover = createSprite(width/2, height/2-150);
   gameover.addImage(gameoverimg);
   gameover.scale = 0.7;
 
@@ -71,10 +72,10 @@ function setup()
   edges = createEdgeSprites();
 
   //criar o sprite do solo
-  solo = createSprite(300,180,600,20);
+  solo = createSprite(width/2,height/2+20,width,20);
   solo.addImage(soloImg);
 
-  soloinvisivel = createSprite(50,190,100,10);
+  soloinvisivel = createSprite(50,height/2+30,100,10);
   soloinvisivel.visible = false;
 
   //criar os grupos de cactos e nuvens
@@ -88,12 +89,16 @@ function draw()
   background("lightgray");
   //exibir pontuação
   //console.log(frameCount);
-  text("Score: " + pontos, 500,50);
+  text("Score: " + pontos, width/2,50);
   
 
   if(gameState === PLAY){
     //contar pontuação
-    pontos = pontos + Math.round(frameCount/60);
+    pontos = pontos + Math.round(getFrameRate()/60);
+
+    //sumir os sprites de game over quando está jogando
+    recomeçar.visible = false;
+    gameover.visible = false;
 
     //tocar musica a cada 100 pontos
     if(pontos>0 && pontos % 1000 === 0){
@@ -101,7 +106,7 @@ function draw()
     }
 
     //movimento do solo
-    solo.velocityX = -2;
+    solo.velocityX = -4 - pontos/100;
     //console.log(solo.x);
 
     //solo infinito
@@ -109,15 +114,16 @@ function draw()
     solo.x = solo.width/2;
   }
 //fazer o trex pular
-if(keyDown("space") && trex.y>=161.5){
-  trex.velocityY = -10;
+if((keyDown("space") || touches.length > 0) && trex.y>=height/2+5){
+  trex.velocityY = -9;
   puloSom.play();
+  touches = [];
 }
 
 //dar gravidade para o trex
 trex.velocityY = trex.velocityY + 0.3;
 //posição do trex no eixo y
-  //console.log(trex.y);
+  console.log(trex.y);
  
   //chamada da função gerar nuvens
   gerarNuvens();
@@ -133,6 +139,11 @@ if(gCacto.isTouching(trex)){
 
   }
   else if(gameState === END){
+
+    //mostrar os sprites de game over
+    recomeçar.visible = true;
+    gameover.visible = true;
+
     //solo parado
     solo.velocityX = 0;
 
@@ -153,6 +164,12 @@ if(gCacto.isTouching(trex)){
    //mudando a animação do trex
    trex.changeAnimation("bateu",trexBateu);
 
+   //botão de reset
+   if(mousePressedOver(recomeçar) || touches.length > 0){
+     reset();
+     touches = [];
+   }
+
   }
 
   //colidir com o solo
@@ -168,7 +185,7 @@ if(gCacto.isTouching(trex)){
  {
    //para gerar a nuvem a cada 60 quadros(frameCount)
    if(frameCount%60===0){
-    nuvem=createSprite(600, 90, 20, 30);
+    nuvem=createSprite(width, height/2-150, 20, 30);
     nuvem.addImage(nuvemimg);
     nuvem.velocityX = - 3;
     //gerar nuvens em posições aleatórias no eixo y
@@ -191,8 +208,8 @@ if(gCacto.isTouching(trex)){
   {
     if(frameCount % 100 === 0)
     {
-     cacto = createSprite(600, 170, 20, 40);
-     cacto.velocityX = -2;
+     cacto = createSprite(width, height/2+10, 20, 40);
+     cacto.velocityX = -6 -pontos/100;
      cacto.scale = 0.5;
      var aleatorio = Math.round(random(1,6));
      switch(aleatorio){
@@ -219,4 +236,16 @@ if(gCacto.isTouching(trex)){
      gCacto.add(cacto);
     }
  }
+
+  function reset()
+ {
+   gameState = PLAY;
+
+   gCacto.destroyEach();
+   gNuvem.destroyEach();
+
+   trex.changeAnimation("Correndo",trex_correndo);
+
+   pontos = 0;
+  }
 
